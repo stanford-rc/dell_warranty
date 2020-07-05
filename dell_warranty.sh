@@ -3,20 +3,20 @@
 
 # functions
 err() {
-    #[[ $json == 1 ]] &&
-    [[ "$*" != "" ]] && echo "Error: $*"
+    if [[ "$*" != "" ]]; then
+        [[ $json == 1 ]] && jo error="$*" || echo "Error: $*"
+    fi
     exit 1
 }
 
 usage() {
     local s=${0##*/}
     cat << EOU
-Usage:  $s [-j] [-e] SERVICE_TAG
+Usage:  $s [-j] [-e] <service_tag>
 
         -j  output data is serialized as a JSON object
-        -e  get expiration date only
+        -e  only display the warranty expiration date
 
-$s is a simple CLI tool to query warranty information about Dell servers.
 EOU
     err
 }
