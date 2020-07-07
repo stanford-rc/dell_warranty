@@ -49,7 +49,12 @@ type jo   &> /dev/null || err "jo not found (https://github.com/jpmens/jo)"
 
 
 # set default HTTPie options
-http="http --check-status --follow --timeout=5"
+_http() { # $1: URL
+    local url=$1
+    $(which http) --check-status --follow --timeout=5 "$url" \
+    Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
+    Origin:https://www.dell.com
+}
 
 # URLs
 url_root="https://www.dell.com/support"
@@ -61,7 +66,7 @@ url_overview="$url_root/home/us/en/04/product-support/servicetag"
 
 
 # get general info
-overview=$($http "$url_overview/$svctag" Accept-Language:en-US,en) || err
+overview=$(_http "$url_overview/$svctag") || err
 
 # check for invalid service tag
 o_link=$(pup 'link[rel="canonical"] attr{href}' <<< "$overview")
@@ -79,10 +84,9 @@ done
 
 
 # get warranty info
-w_info=$(echo -n "warrantyEncryptedParams=$w_qparam" | \
-    $http "$url_w_inf" Content-Type:application/x-www-form-urlencoded) || err
-w_details=$(echo -n "servicetag=$s_encryp" | \
-    $http "$url_w_det" Content-Type:application/x-www-form-urlencoded) || err
+w_info=$(echo -n "warrantyEncryptedParams=$w_qparam" | _http "$url_w_inf") \
+    || err
+w_details=$(echo -n "servicetag=$s_encryp" | _http "$url_w_det") || err
 
 # get configuration details
 c_details=$(http "$url_c_det?serviceTag=$s_encryp") || err
