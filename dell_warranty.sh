@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # functions
 err() {
     if [[ "$*" != "" ]]; then
@@ -21,7 +20,7 @@ EOU
     err
 }
 
-exp_only=0 json=0 debug=0
+exp_only=0 json=0 dump=0
 optspec=":hdje"
 while getopts "$optspec" optchar; do
     case "${optchar}" in
@@ -31,7 +30,7 @@ while getopts "$optspec" optchar; do
             ;;
         j)  json=1
             ;;
-        d)  debug=1
+        d)  dump=1
             ;;
         *)  usage >&2
             ;;
@@ -88,8 +87,8 @@ w_details=$(echo -n "servicetag=$s_encryp" | \
 # get configuration details
 c_details=$(http "$url_c_det?serviceTag=$s_encryp") || err
 
-## debug save output
-[[ $debug == 1 ]] && {
+## dump save output
+[[ $dump == 1 ]] && {
     echo "$overview" > "overview_$svctag.html"
     echo "$w_info" > "w_info_$svctag.html"
     echo "$w_details" > "w_details_$svctag.html"
