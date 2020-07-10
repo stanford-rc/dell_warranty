@@ -57,12 +57,13 @@ _http() { # $1: URL
 }
 
 # URLs
-url_root="https://www.dell.com/support"
+cc=( at be ca ch cl co.uk co.kr de es eu fr ie it nl no pl se tv )
+url_root="https://www.dell.${cc[$RANDOM%${#cc[@]}]}/support"
 url_comp="$url_root/components/dashboard/en-us"
 url_w_inf="$url_comp/Warranty/GetInlineWarranty"
 url_w_det="$url_comp/Warranty/GetWarrantyDetails"
 url_c_det="$url_comp/Configuration/GetConfiguration"
-url_overview="$url_root/home/us/en/04/product-support/servicetag"
+url_overview="$url_root/home/en-us/product-support/servicetag"
 
 
 # get general info
