@@ -60,8 +60,9 @@ _http() { # $1: URL
 cc=( at be ca ch cl co.uk co.kr de es eu fr ie it nl no pl se tv )
 url_root="https://www.dell.${cc[$RANDOM%${#cc[@]}]}/support"
 url_comp="$url_root/components/dashboard/en-us"
-url_w_inf="$url_comp/Warranty/GetInlineWarranty"
-url_w_det="$url_comp/Warranty/GetWarrantyDetails"
+
+url_w_inf="$url_comp/warranty/warrantydetails"
+url_w_det="$url_comp/warranty/viewwarranty"
 url_c_det="$url_comp/Configuration/GetConfiguration"
 url_overview="$url_root/home/en-us/product-support/servicetag"
 
@@ -75,19 +76,14 @@ o_link=$(pup 'link[rel="canonical"] attr{href}' <<< "$overview")
 [[ "$o_link" =~ "Selection=$svctag&amp;IsInvalidSelection=True" ]] && \
     err "service tag not found ($svctag)"
 
-# retrieve parameters from overview
+# retrieve wncrypted service tag from overview
 s_encryp=$(awk '/var encryptedTag/ {print $NF}'   <<< "$overview" | tr -d "';")
-w_qparam=$(awk '/var warrantyQparam/ {print $NF}' <<< "$overview" | tr -d "';")
-
-for k in s_encryp w_qparam; do
-    [[ ${!k} == "" ]] && err "$k not found"
-done
+[[ ${s_encryp} == "" ]] && err "$s_encryp not found"
 
 
 # get warranty info
-w_info=$(echo -n "warrantyEncryptedParams=$w_qparam" | _http "$url_w_inf") \
-    || err
-w_details=$(echo -n "servicetag=$s_encryp" | _http "$url_w_det") || err
+w_info=$(_http "$url_w_inf/$s_encryp/mse") || err
+w_details=$( _http "$url_w_det/$s_encryp") || err
 
 # get configuration details
 c_details=$(http "$url_c_det?serviceTag=$s_encryp") || err
