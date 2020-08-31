@@ -77,7 +77,7 @@ o_link=$(pup 'link[rel="canonical"] attr{href}' <<< "$overview")
     err "service tag not found ($svctag)"
 
 # retrieve wncrypted service tag from overview
-s_encryp=$(awk '/var encryptedTag/ {print $NF}'   <<< "$overview" | tr -d "';")
+s_encryp=$(awk '/encryptedTag = / {print $NF}'   <<< "$overview" | tr -d "';")
 [[ ${s_encryp} == "" ]] && err "$s_encryp not found"
 
 
