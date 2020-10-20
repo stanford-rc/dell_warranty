@@ -48,17 +48,8 @@ type jo   &> /dev/null || err "jo not found (https://github.com/jpmens/jo)"
 [[ "$svctag" =~ [A-Z0-9]{7} ]] || err "invalid service tag ($svctag)"
 
 
-# set default HTTPie options
-_http() { # $1: URL
-    local url=$1
-    $(which http) --check-status --follow --timeout=5 "$url" \
-    Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
-    Origin:https://www.dell.com
-}
-
 # URLs
-cc=( at be ca ch cl co.uk co.kr de es eu fr ie it nl no pl se tv )
-url_root="https://www.dell.${cc[$RANDOM%${#cc[@]}]}/support"
+url_root="https://www.dell.com/support"
 url_comp="$url_root/components/dashboard/en-us"
 
 url_w_inf="$url_comp/warranty/warrantydetails"
@@ -66,6 +57,20 @@ url_w_det="$url_comp/warranty/viewwarranty"
 url_c_det="$url_comp/Configuration/GetConfiguration"
 url_overview="$url_root/home/en-us/product-support/servicetag"
 
+_abck="6DE3EC4016FEFFA38ADE999877AD09BC~0~YAAQZBiujIFYkC91AQAAq3sZSARm3RHreRTO"
+_abck+="5e5KRIuXmlbYhmRsu09+VAbYXjyuNz/JgdmIV/OOQq5pbYrXsjWjLFbQfv18O389YkcvNn"
+_abck+="4OGc4uMJCnWp3S/zY5rBCGoQnKDKtZ4qfAVcELkLtNv1cBqp2tEQ3ZuKbA1tbNpK5k9OdC"
+_abck+="4FoT2qa5RweBNV6KIQOS91QChTjKCI3KZiKC1dV/zKf1eg/KL2clThjKxlX9+3PLNu+gFD"
+_abck+="KtQxmXlq+aRx5GyzUn4oXcC+blFBHNAn3huK7r4/2RkLvRM0J4mD7pVxNDW5Jaep5cZNdy"
+_abck+="83J1AJjMStY=~-1~||-1||~-1"
+
+# set default HTTPie options
+_http() { # $1: URL
+    local url=$1
+    $(which http) --check-status --follow --timeout=5 "$url" \
+    Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
+    Origin:https://www.dell.com Cookie:_abck=$_abck
+}
 
 # get general info
 overview=$(_http "$url_overview/$svctag") || err
@@ -76,9 +81,9 @@ o_link=$(pup 'link[rel="canonical"] attr{href}' <<< "$overview")
 [[ "$o_link" =~ "Selection=$svctag&amp;IsInvalidSelection=True" ]] && \
     err "service tag not found ($svctag)"
 
-# retrieve wncrypted service tag from overview
+# retrieve encrypted service tag from overview
 s_encryp=$(awk '/encryptedTag = / {print $NF}'   <<< "$overview" | tr -d "';")
-[[ ${s_encryp} == "" ]] && err "$s_encryp not found"
+[[ ${s_encryp} == "" ]] && err "s_encryp not found"
 
 
 # get warranty info
