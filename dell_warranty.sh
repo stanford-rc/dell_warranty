@@ -69,7 +69,7 @@ _http() { # $1: URL
     local url=$1
     $(which http) --check-status --follow --timeout=5 "$url" \
     Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
-    Origin:https://www.dell.com Cookie:_abck=$_abck
+    Origin:https://support.dell.com Cookie:_abck=$_abck
 }
 
 # get general info
