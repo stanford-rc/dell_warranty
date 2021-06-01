@@ -107,7 +107,7 @@ c_details=$(http "$url_c_det?serviceTag=$s_encryp") || err
 }
 
 # extract nuggets
-c_prod=$(pup '.product-info h2 text{}' <<< "$overview")
+c_prod=$(pup '.product-info h1 text{}' <<< "$overview")
 w_rexp=$(pup 'p#warrantyExpiringLabel text{}' <<< "$w_info" | \
          sed 's/^Expire[sd] \+//')
 w_expdate=$(date +%s --date="$w_rexp") # epoch
