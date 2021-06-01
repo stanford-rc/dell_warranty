@@ -83,6 +83,10 @@ o_link=$(pup 'link[rel="canonical"] attr{href}' <<< "$overview")
 
 # retrieve encrypted service tag from overview
 s_encryp=$(awk '/encryptedTag = / {print $NF}'   <<< "$overview" | tr -d "';")
+## dump save output
+[[ $dump == 1 ]] && {
+    echo "$overview" > "overview_$svctag.html"
+}
 [[ ${s_encryp} == "" ]] && err "s_encryp not found"
 
 
@@ -95,7 +99,6 @@ c_details=$(http "$url_c_det?serviceTag=$s_encryp") || err
 
 ## dump save output
 [[ $dump == 1 ]] && {
-    echo "$overview" > "overview_$svctag.html"
     echo "$w_info" > "w_info_$svctag.html"
     echo "$w_details" > "w_details_$svctag.html"
     echo "$c_details" > "c_details_$svctag.html"
