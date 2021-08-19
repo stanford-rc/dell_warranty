@@ -57,21 +57,25 @@ url_w_det="$url_comp/warranty/viewwarranty"
 url_c_det="$url_comp/Configuration/GetConfiguration"
 url_overview="$url_root/home/en-us/product-support/servicetag"
 
-
-_abck="A4EAA91FEF209EC53BD30934435D61FA~0~YAAQnvffFy3cY7h5AQAAzcvwyAWl6q8Z6xIW"
-_abck+="+/YcQSsv2OL7sFaLYsQtzlQBpRlrMkyhrvNxjN+tlE3ygmWNx81gSoZUpxuKRty/I7SJPX"
-_abck+="HQvZoCCvx5re7NwJtvWgumPRgSf8KAEN3O7PPBGvT40oeWNruUTTChjTGjNA46cHtlCZRy"
-_abck+="0i36/AjJ0dnpF6ssmZnFrrj8Y7QgjN1e131UyEgq4crXDmH87sxtkT+PCCRZ5Wzm0PCtn2"
-_abck+="zVL+62kzWscnWlqv+9AsBU8Nxxfj9TRqx6ZNgYE7uUEPXQv8jRaqJ/wLq47xjxo7Lupnrz"
-_abck+="2y1SQRa3Bcgg220kipAwtwXS9V5HQT2GzVjvN15LL8vX33l8cPKZLRTft/+jVFFAOVY/8j"
-_abck+="x9npOY93z2UtsgDcQC1PLQLMCH~-1~-1~-1"
+_abck="9030AB4552E9EDA0DD0172BC1E589DF2~0~YAAQB5bfFwNQQDF7AQAAoQqrWwZsazyEn9Hv"
+_abck+="dCi1tQHAJTHJ+sPXM69EjwvtVXt9NrR0eznx49zRTF/bmzSAcYe+p+ew6HB5F3+ZbzAPWG"
+_abck+="pNgBb5lBzBUWXkjFFizDeQzBRDCQp2ZcklGFvxQHV4Skun0SLX9rJfEUIUxBryFHF5Rot2"
+_abck+="Aj+KG3FYiM/6D7NesZhbayYQbfIkGy/STeJg7U+fvYaKREWWuzqrnJg/rVjkn13T4IXACy"
+_abck+="fyDuDimyVmyIKgoJ36XKGXPP81qzLwPfb9v9Ylikp08l9NmDuLqJuyiXkP97bCiqAiENrB"
+_abck+="cJW2DE9crYB2ZlxVTRfvdmCrhJAbVYN2B9mSxSI4C7/7LWlbVm9CBV38A9pMT2+oMYujFd"
+_abck+="WdkDKqn3RR2Ra4jnHCFRnAFNiS~-1~-1~-1"
+bm_sz="73AF4E9EE5A601B9901B1523A6BCF67F~YAAQB5bfFwVQQDF7AQAAoQqrWwyIS8f9UXoE5/"
+bm_sz+="w3C8P/bj1ZSB+3YwHhOwBRAUVtjxLZCvgX+8HIrgKDrEtvPID8lJ4J8lCmSQ5D1W9HTzd1"
+bm_sz+="XGPTqSuYf8fqs2MF4xO9s5dlWtnj5UJ1e7/VO94l+eH75BjgQYhxWPF3tYEMuHT3mEuyEv"
+bm_sz+="pDCuAc1TxG8JXGSbxt30MXkMLHD5aDLh7VtnjpRwMsjTRm3whIUpQCFALI6h5x1R05k239"
+bm_sz+="E4IrTRdtdSJnBtb9Q51DKGU76eNgBqFw2f6k8Si2EiZX+oAGRumh~3688003~4534577"
 
 # set default HTTPie options
 _http() { # $1: URL
     local url=$1
     $(which http) --check-status --follow --timeout=5 "$url" \
     Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
-    Origin:https://support.dell.com Cookie:_abck=$_abck
+    Origin:https://support.dell.com Cookie:_abck=$_abck;bm_sz=$bm_sz
 }
 
 # get general info
@@ -115,12 +119,11 @@ w_expdate=$(date +%s --date="$w_rexp") # epoch
 w_stat=$(awk '/var warrantystatus/ {print $NF}'  <<< "$w_info" | tr -d "';")
 w_type=$(pup 'p:parent-of(#inline-warrantytext) text{}' <<< "$w_info" | \
     xargs | awk -F: '{gsub(/[^[:alnum:]]/,"",$2); print $2}')
-w_rshp=$(pup ':contains("Ship Date :") text{}' <<< "$w_details" | \
-    awk -F: '{print $2}')
+w_rshp=$(pup ':contains("Ship Date") + div text{}' <<< "$w_details")
 w_shpdate=$(date +%s --date="$w_rshp") # epoch
 
 # iterate over service types and dates
-w_num=$(pup 'thead + tbody > tr' <<< "$w_details" | grep -c '<tr>')
+w_num=$(pup 'thead + tbody > tr' <<< "$w_details" | grep -c '<tr')
 for i in $(seq 1 "$w_num"); do
     w_service[$i]=$(pup \
         'thead + tbody tr:nth-of-type('"$i"') td:nth-of-type(1) text{}' \
