@@ -64,18 +64,13 @@ _abck+="Aj+KG3FYiM/6D7NesZhbayYQbfIkGy/STeJg7U+fvYaKREWWuzqrnJg/rVjkn13T4IXACy"
 _abck+="fyDuDimyVmyIKgoJ36XKGXPP81qzLwPfb9v9Ylikp08l9NmDuLqJuyiXkP97bCiqAiENrB"
 _abck+="cJW2DE9crYB2ZlxVTRfvdmCrhJAbVYN2B9mSxSI4C7/7LWlbVm9CBV38A9pMT2+oMYujFd"
 _abck+="WdkDKqn3RR2Ra4jnHCFRnAFNiS~-1~-1~-1"
-bm_sz="73AF4E9EE5A601B9901B1523A6BCF67F~YAAQB5bfFwVQQDF7AQAAoQqrWwyIS8f9UXoE5/"
-bm_sz+="w3C8P/bj1ZSB+3YwHhOwBRAUVtjxLZCvgX+8HIrgKDrEtvPID8lJ4J8lCmSQ5D1W9HTzd1"
-bm_sz+="XGPTqSuYf8fqs2MF4xO9s5dlWtnj5UJ1e7/VO94l+eH75BjgQYhxWPF3tYEMuHT3mEuyEv"
-bm_sz+="pDCuAc1TxG8JXGSbxt30MXkMLHD5aDLh7VtnjpRwMsjTRm3whIUpQCFALI6h5x1R05k239"
-bm_sz+="E4IrTRdtdSJnBtb9Q51DKGU76eNgBqFw2f6k8Si2EiZX+oAGRumh~3688003~4534577"
 
 # set default HTTPie options
 _http() { # $1: URL
     local url=$1
     $(which http) --check-status --follow --timeout=5 "$url" \
     Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
-    Origin:https://support.dell.com Cookie:_abck=$_abck;bm_sz=$bm_sz
+    Origin:https://support.dell.com Cookie:_abck=$_abck
 }
 
 # get general info
