@@ -49,7 +49,7 @@ type jo   &> /dev/null || err "jo not found (https://github.com/jpmens/jo)"
 
 
 # URLs
-url_root="https://www.dell.com/support/../support"
+url_root="https://www.dell.com/support/."
 url_comp="$url_root/components/dashboard/en-us"
 
 url_w_inf="$url_comp/warranty/warrantydetails"
@@ -114,7 +114,8 @@ w_expdate=$(date +%s --date="$w_rexp") # epoch
 w_stat=$(awk '/var warrantystatus/ {print $NF}'  <<< "$w_info" | tr -d "';")
 w_type=$(pup 'p:parent-of(#inline-warrantytext) text{}' <<< "$w_info" | \
     xargs | awk -F: '{gsub(/[^[:alnum:]]/,"",$2); print $2}')
-w_rshp=$(pup ':contains("Ship Date") + div text{}' <<< "$w_details")
+w_rshp=$(pup ':contains("Ship Date") + div text{}' <<< "$w_details" | head -n1)
+w_ctry=$(pup ':contains("Location")  + div text{}' <<< "$w_details" | head -n1)
 w_shpdate=$(date +%s --date="$w_rshp") # epoch
 
 # iterate over service types and dates
@@ -148,6 +149,7 @@ if [[ $json == 1 ]]; then
     jo -p product="$c_prod" \
           svctag="$svctag" \
           ship_date="$(date -d@"$w_shpdate" -I)" \
+          country="${w_ctry:-n/a}" \
           warranty_type="${w_type:-n/a}" \
           warranty_status="${w_stat:-n/a}" \
           warranty_expiration_date="$(date -d@"$w_expdate" -I)" \
@@ -165,6 +167,7 @@ else
     echo "==========================================="
     echo " service tag         | $svctag"
     echo " ship date           | $(date -d@"$w_shpdate" -I)"
+    echo " country             | $w_ctry"
     echo "-------------------------------------------"
     echo " warranty type       | ${w_type:-n/a}"
     echo " warranty status     | ${w_stat:-n/a}"
