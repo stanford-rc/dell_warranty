@@ -126,7 +126,7 @@ To start the API server, you can either:
 
 * or directly deploy to Render:
 
-  [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+  [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/stanford-rc/dell_warranty)
 
 
 And then, you can query the API server with:
