@@ -1,7 +1,0 @@
-{
-  "name": "Dell Warranty",
-  "description": "A REST API to check Dell hardware warranty information",
-  "repository": "https://github.com/stanford-rc/dell_warranty",
-  "keywords": ["dell", "warranty", "api"],
-  "stack": "container"
-}
