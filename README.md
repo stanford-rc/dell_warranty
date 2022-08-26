@@ -107,9 +107,8 @@ $ ./dell_warranty -j <service_tag>
 ### REST API
 
 
-
-
 To start the API server, you can either:
+
 * use [`shell2http`](https://github.com/msoap/shell2http) directly, and run:
   ```
   $ shell2http -form /check './dell_warranty.sh -j $v_svctag'
@@ -125,9 +124,9 @@ To start the API server, you can either:
   2020/07/14 18:43:40 listen http://localhost:8080/
   ```
 
-* or directly deploy on Heroku:
+* or directly deploy to Render:
 
-  [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+  [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
 
 And then, you can query the API server with:
