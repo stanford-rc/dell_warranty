@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: dell_warranty
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    numInstances: 1
+    envVars:
+      - key: API_CACHE
+        value: 3600
+      - key: WEB_CONCURRENCY
+        value: 3
+
