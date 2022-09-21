@@ -57,13 +57,13 @@ url_w_det="$url_comp/warranty/viewwarranty"
 url_c_det="$url_comp/Configuration/GetConfiguration"
 url_overview="$url_root/home/en-us/product-support/servicetag"
 
-_abck="9030AB4552E9EDA0DD0172BC1E589DF2~0~YAAQB5bfFwNQQDF7AQAAoQqrWwZsazyEn9Hv"
-_abck+="dCi1tQHAJTHJ+sPXM69EjwvtVXt9NrR0eznx49zRTF/bmzSAcYe+p+ew6HB5F3+ZbzAPWG"
-_abck+="pNgBb5lBzBUWXkjFFizDeQzBRDCQp2ZcklGFvxQHV4Skun0SLX9rJfEUIUxBryFHF5Rot2"
-_abck+="Aj+KG3FYiM/6D7NesZhbayYQbfIkGy/STeJg7U+fvYaKREWWuzqrnJg/rVjkn13T4IXACy"
-_abck+="fyDuDimyVmyIKgoJ36XKGXPP81qzLwPfb9v9Ylikp08l9NmDuLqJuyiXkP97bCiqAiENrB"
-_abck+="cJW2DE9crYB2ZlxVTRfvdmCrhJAbVYN2B9mSxSI4C7/7LWlbVm9CBV38A9pMT2+oMYujFd"
-_abck+="WdkDKqn3RR2Ra4jnHCFRnAFNiS~-1~-1~-1"
+_abck="9BE24ADF1158FFF0CEF1DF3FEECA2461~0~YAAQnn8lF+qbzUSDAQAAmBe5YAgrRqIRBMmhg"
+_abck+="gZh0Wm3kHRIvwtw/GEYIszuS+mxmdY806g9ZLOBnUrM3tWBvEVzBSW1RE3QeVk41f62Fja+"
+_abck+="mlt2lAxaXpccDKacMJJYM7KlTzv/cEhwPjQP8DV4MJtxEwJP43E3tX0cjBob8FGbH+eV9sS"
+_abck+="hXgWcnXOXY5dByQFGiuFGnUFEzE2UUooBCvVZlZ1Kp6v+29lqdXbUE7BAZxFmTRcfxN6du/"
+_abck+="IlcsWNOAOKMlbkJfR5ccDH4Y3lEy/atcaReNNrQw2OGPyyeLmxvMy5ZSI8d1gkVySNIoV4t"
+_abck+="DmGU5hw5Ipzp87tQ+3Bqhdz064UBW7sAfQs4uTS2R98ccZNFW6S3xWOLCx/7y5PB5ml2rj3"
+_abck+="Kx4JsbQ80THiWvAliQ==~-1~-1~-1"
 
 # set default HTTPie options
 _http() { # $1: URL
