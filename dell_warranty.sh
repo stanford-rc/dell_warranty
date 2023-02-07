@@ -49,7 +49,7 @@ type jo   &> /dev/null || err "jo not found (https://github.com/jpmens/jo)"
 
 
 # URLs
-url_root="https://www.dell.com/support"
+url_root="https://www.dell.com/support/."
 url_comp="$url_root/components/dashboard/en-us"
 
 url_w_inf="$url_root/warranty/en-us/warrantydetails/servicetag"
