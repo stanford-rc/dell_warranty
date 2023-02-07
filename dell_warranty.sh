@@ -49,7 +49,7 @@ type jo   &> /dev/null || err "jo not found (https://github.com/jpmens/jo)"
 
 
 # URLs
-url_root="https://www.dell.com/support/."
+url_root="https://www.dell.com/support"
 url_comp="$url_root/components/dashboard/en-us"
 
 url_w_inf="$url_root/warranty/en-us/warrantydetails/servicetag"
@@ -69,7 +69,7 @@ _http() { # $1: URL
     local url=$1
     $(which http) --check-status --follow --timeout=5 "$url" \
     Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
-    Origin:https://support.dell.com Cookie:_abck=$_abck user-agent:Mozilla/5.0
+    Origin:https://support.dell.com Cookie:_abck=$_abck
 }
 
 # get general info
