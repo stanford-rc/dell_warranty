@@ -49,11 +49,10 @@ type jo   &> /dev/null || err "jo not found (https://github.com/jpmens/jo)"
 
 
 # URLs
-url_root="https://www.dell.com/support/."
+url_root="https://www.dell.com/support"
 url_comp="$url_root/components/dashboard/en-us"
 
-url_w_inf="$url_comp/warranty/warrantydetails"
-url_w_det="$url_comp/warranty/viewwarranty"
+url_w_inf="$url_root/warranty/en-us/warrantydetails/servicetag"
 url_c_det="$url_comp/Configuration/GetConfiguration"
 url_overview="$url_root/home/en-us/product-support/servicetag"
 
@@ -70,14 +69,14 @@ _http() { # $1: URL
     local url=$1
     $(which http) --check-status --follow --timeout=5 "$url" \
     Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
-    Origin:https://support.dell.com Cookie:_abck=$_abck
+    Origin:https://support.dell.com Cookie:_abck=$_abck user-agent:Mozilla/5.0
 }
 
 # get general info
 overview=$(_http "$url_overview/$svctag") || err
 
 # check for invalid service tag
-o_link=$(pup 'link[rel="canonical"] attr{href}' <<< "$overview")
+o_link=$(pup 'meta[rel="channel"] attr{href}' <<< "$overview")
 # shellcheck disable=SC2076
 [[ "$o_link" =~ "Selection=$svctag&amp;IsInvalidSelection=True" ]] && \
     err "service tag not found ($svctag)"
@@ -92,8 +91,7 @@ s_encryp=$(awk '/encryptedTag = / {print $NF}'   <<< "$overview" | tr -d "';")
 
 
 # get warranty info
-w_info=$(_http "$url_w_inf/$s_encryp/mse") || err
-w_details=$( _http "$url_w_det/$s_encryp") || err
+w_info=$(_http "$url_w_inf/$s_encryp/mse/IPS?_=f") || err
 
 # get configuration details
 c_details=$(http "$url_c_det?serviceTag=$s_encryp") || err
@@ -101,35 +99,35 @@ c_details=$(http "$url_c_det?serviceTag=$s_encryp") || err
 ## dump save output
 [[ $dump == 1 ]] && {
     echo "$w_info" > "w_info_$svctag.html"
-    echo "$w_details" > "w_details_$svctag.html"
     echo "$c_details" > "c_details_$svctag.html"
 }
 
 # extract nuggets
 c_prod=$(pup '.product-info h1 text{}' <<< "$overview")
-w_rexp=$(pup 'p.warrantyExpiringLabel text{}' <<< "$w_info" | \
+w_rexp=$(pup '#expirationDt text{}' <<< "$w_info" | \
          sed 's/^Expire[sd] \+//')
 w_expdate=$(date +%s --date="$w_rexp") # epoch
 
-w_stat=$(awk '/var warrantystatus/ {print $NF}'  <<< "$w_info" | tr -d "';")
-w_type=$(pup 'p:parent-of(#inline-warrantytext) text{}' <<< "$w_info" | \
-    xargs | awk -F: '{gsub(/[^[:alnum:]]/,"",$2); print $2}')
-w_rshp=$(pup ':contains("Ship Date") + div text{}' <<< "$w_details" | head -n1)
-w_ctry=$(pup ':contains("Location")  + div text{}' <<< "$w_details" | head -n1)
+w_stat=$(pup '.warrantyExpiringLabel text{}'  <<< "$w_info" | uniq)
+w_type=$(pup 'p:contains("Current Support Services Plan") span text{}' \
+    <<< "$w_info" | xargs)
+w_rshp=$(pup ':contains("Ship Date") + div text{}' <<< "$w_info" | head -n1)
+w_ctry=$(pup ':contains("Location")  + div text{}' <<< "$w_info" | head -n1)
 w_shpdate=$(date +%s --date="$w_rshp") # epoch
 
 # iterate over service types and dates
-w_num=$(pup 'thead + tbody > tr' <<< "$w_details" | grep -c '<tr')
+w_num=$(pup 'thead + tbody > tr' <<< "$w_info" | grep -c '<tr')
+# shellcheck disable=SC2004
 for i in $(seq 1 "$w_num"); do
     w_service[$i]=$(pup \
         'thead + tbody tr:nth-of-type('"$i"') td:nth-of-type(1) text{}' \
-        <<< "$w_details")
+        <<< "$w_info")
     w_start_d[$i]=$(pup \
         'thead + tbody tr:nth-of-type('"$i"') td:nth-of-type(2) text{}' \
-        <<< "$w_details")
+        <<< "$w_info")
     w_expir_d[$i]=$(pup \
         'thead + tbody tr:nth-of-type('"$i"') td:nth-of-type(3) text{}' \
-        <<< "$w_details")
+        <<< "$w_info")
 done
 
 ## json output
@@ -140,6 +138,7 @@ if [[ $json == 1 ]]; then
         exit
     fi
 
+    # shellcheck disable=SC2004
     for i in ${!w_service[*]}; do
       srv[$i]=$(jo service="${w_service[$i]}" \
          start_date="$(date -d"${w_start_d[$i]}" -I)" \
