@@ -9,11 +9,12 @@ ENV PATH="${PATH}:/root/go/bin"
 
 ENV PORT=8080
 ENV API_CACHE=3600
+ENV DEBUG=0
 
 COPY ./dell_warranty.sh /app/dell_warranty.sh
 
 EXPOSE $PORT
 
 CMD shell2http -port ${PORT} -no-index -cache=${API_CACHE} \
-               -show-errors -include-stderr -form \
+               -export-vars DEBUG -show-errors -include-stderr -form \
                /check '/app/dell_warranty.sh -j $v_svctag'
