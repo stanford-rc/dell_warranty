@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[[ $DEBUG == 1 ]] && set -x
+
 # functions
 err() {
     if [[ "$*" != "" ]]; then
