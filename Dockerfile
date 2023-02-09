@@ -9,7 +9,6 @@ ENV PATH="${PATH}:/root/go/bin"
 
 ENV PORT=8080
 ENV API_CACHE=3600
-ENV DEBUG=0
 
 COPY ./dell_warranty.sh /app/dell_warranty.sh
 

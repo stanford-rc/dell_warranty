@@ -69,7 +69,7 @@ _abck+="+Xq75bHBPbFfGLZuOLLR~-1~-1~-1"
 # set default HTTPie options
 _http() { # $1: URL
     local url=$1
-    $(which http) --check-status --follow --timeout=5 "$url" \
+    $(which http) --check-status --follow --timeout=5 ${DEBUG:+-vv} "$url" \
     Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
     Origin:https://support.dell.com Cookie:_abck=$_abck user-agent:Mozilla/5.0
 }
