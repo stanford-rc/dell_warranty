@@ -15,5 +15,6 @@ COPY ./dell_warranty.sh /app/dell_warranty.sh
 EXPOSE $PORT
 
 CMD shell2http -port ${PORT} -no-index -cache=${API_CACHE} \
-               -export-vars DEBUG -show-errors -include-stderr -form \
+               -export-vars DEBUG,DELL_API_KEY,DELL_API_SEC \
+               -show-errors -include-stderr -form \
                /check '/app/dell_warranty.sh -j $v_svctag'
