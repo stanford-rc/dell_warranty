@@ -17,4 +17,4 @@ EXPOSE $PORT
 CMD shell2http -port ${PORT} -no-index -cache=${API_CACHE} \
                -export-vars DEBUG,DELL_API_KEY,DELL_API_SEC \
                -show-errors -include-stderr -form \
-               /check '/app/dell_warranty.sh -j $v_svctag'
+               /check 'DEBUG=$v_debug /app/dell_warranty.sh -j $v_svctag'

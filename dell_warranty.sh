@@ -95,7 +95,8 @@ if [[ -n $DELL_API_KEY ]] && [[ -n $DELL_API_SEC ]]; then
     api_auth_url="https://apigtwb2c.us.dell.com/auth/oauth/v2/token"
 
     # get bearer token
-    o=$(http POST $api_auth_url Content-Type:application/x-www-form-urlencoded \
+    o=$(http ${DEBUG:+-vv} POST $api_auth_url \
+             Content-Type:application/x-www-form-urlencoded \
              "client_id==$DELL_API_KEY" "client_secret==$DELL_API_SEC" \
              "grant_type==client_credentials")
     [[ $(jq -r .error <<< "$o") != "null" ]] &&
@@ -106,7 +107,7 @@ if [[ -n $DELL_API_KEY ]] && [[ -n $DELL_API_SEC ]]; then
     _api() { # $1: API function, $2: params
         local func=$1
         local params=$2
-        http "$api_url/$func?$params" "Accept:application/json" \
+        http ${DEBUG:+-vv} "$api_url/$func?$params" "Accept:application/json" \
              "Authorization:Bearer $token"
     }
 
