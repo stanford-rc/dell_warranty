@@ -104,7 +104,8 @@ if [[ -n $DELL_API_KEY ]] && [[ -n $DELL_API_SEC ]]; then
     api_auth_url="https://apigtwb2c.us.dell.com/auth/oauth/v2/token"
 
     # get bearer token
-    o=$(curl ${DEBUG:+-v} -s --request POST "$api_auth_url" \
+    o=$(curl ${DEBUG:+-v} -sL --connect-timeout 5 \
+             --request POST "$api_auth_url"\
              -d "client_id=$DELL_API_KEY" -d "client_secret=$DELL_API_SEC" \
              -d "grant_type=client_credentials" \
              -H "Content-Type: application/x-www-form-urlencoded" )
@@ -116,7 +117,8 @@ if [[ -n $DELL_API_KEY ]] && [[ -n $DELL_API_SEC ]]; then
     _api() { # $1: API function, $2: params
         local func=$1
         local params=$2
-        curl ${DEBUG:+-v} -s --request GET \
+        curl ${DEBUG:+-v} -sL --connect-timeout 5 \
+             --request GET \
              --url "$api_url/$func?$params" \
              --header "Accept: application/json" \
              --header "Authorization: Bearer $token"
@@ -183,7 +185,7 @@ else
     # set default HTTPie options
     _http() { # $1: URL
         local url=$1
-        curl -s ${DEBUG:+-v} -L --connect-timeout 5 "$url" \
+        curl  ${DEBUG:+-v} -sL --connect-timeout 5 "$url" \
              -H "Accept-Language: en-us" \
              -H "Accept-Encoding: identity" \
              -H "Content-Type: application/x-www-form-urlencoded" \
