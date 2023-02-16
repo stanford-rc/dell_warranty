@@ -28,6 +28,10 @@ err() {
     exit 1
 }
 
+date_conv() {
+    date -d@"$1" -I 2>/dev/null || echo "n/a"
+}
+
 usage() {
     local s=${0##*/}
     cat << EOU
@@ -45,6 +49,7 @@ API credentials must br provided either:
 EOU
     err
 }
+
 
 # arg parse -------------------------------------------------------------------
 exp_only=0 json=0 parts=0
@@ -119,31 +124,33 @@ if [[ -n $DELL_API_KEY ]] && [[ -n $DELL_API_SEC ]]; then
     [[ $(jq -r .invalid <<< "$o") == "true" ]] &&
         err "service tag not found ($svctag)"
 
-    #jq -r <<< "$o"
-
     c_prod=$(jq -r .systemDescription <<< "$o")
-    w_rshp=$(jq -r .shipDate <<< "$o")
     w_ctry=$(jq -r .countryCode <<< "$o")
-
-    declare -A w_service w_start_d w_expir_d
-    eval "$(jq -r '.entitlements[] |
-        "w_service["+(.itemNumber|@sh)+"]="+(.serviceLevelDescription | @sh),
-        "w_start_d["+(.itemNumber|@sh)+"]="+(.startDate),
-        "w_expir_d["+(.itemNumber|@sh)+"]="+(.endDate) ' <<< "$o")"
-
-    # last entitlement to expire
-    declare w_type w_expd
-    eval "$(jq -r '.entitlements | max_by(.endDate) |
-                  @sh "w_type=\(.serviceLevelDescription)
-                       w_expd=\(.endDate)"' <<< "$o")"
-
-    # conversion
-    w_expdate=$(date +%s --date="$w_expd") # epoch
+    w_rshp=$(jq -r .shipDate <<< "$o")
     w_shpdate=$(date +%s --date="$w_rshp") # epoch
 
-    # w_stat check latest exp date compare to now
-    [[ $w_expdate -ge $(date +%s) ]] && w_stat="Active" || w_stat="Expired"
+    if [[ $(jq '.entitlements | length' <<< "$o") == 0 ]]; then
+        w_type="n/a"
+        w_expdate="n/a"
+        w_stat="n/a"
+    else
+        declare -A w_service w_start_d w_expir_d
+        eval "$(jq -r '.entitlements[] |
+            "w_service["+(.itemNumber|@sh)+"]="+(.serviceLevelDescription | @sh),
+            "w_start_d["+(.itemNumber|@sh)+"]="+(.startDate),
+            "w_expir_d["+(.itemNumber|@sh)+"]="+(.endDate) ' <<< "$o")"
 
+        # last entitlement to expire
+        declare w_type w_expd
+        eval "$(jq -r '.entitlements | max_by(.endDate) |
+                      @sh "w_type=\(.serviceLevelDescription)
+                           w_expd=\(.endDate)"' <<< "$o")"
+
+        w_expdate=$(date +%s --date="$w_expd") # epoch
+
+        # w_stat check latest exp date compare to now
+        [[ $w_expdate -ge $(date +%s) ]] && w_stat="Active" || w_stat="Expired"
+    fi
 
 # no API credentials, scraping the public web site
 else
@@ -274,18 +281,18 @@ else
     echo " $c_prod"
     echo "==========================================="
     echo " service tag         | $svctag"
-    echo " ship date           | $(date -d@"$w_shpdate" -I)"
+    echo " ship date           | $(date_conv "$w_shpdate")"
     echo " country             | $w_ctry"
     echo "-------------------------------------------"
     echo " warranty type       | ${w_type:-n/a}"
     echo " warranty status     | ${w_stat:-n/a}"
-    echo " warranty expiration | $(date -d@"$w_expdate" -I)"
+    echo " warranty expiration | $(date_conv "$w_expdate")"
     echo "-------------------------------------------"
 
     for i in ${!w_service[*]}; do
         echo " ${w_service[$i]}" | fmt -w 45
-        echo "   start date: $(date -d"${w_start_d[$i]}" -I)"
-        echo "   end   date: $(date -d"${w_expir_d[$i]}" -I)"
+        echo "   start date: $(date_conv "${w_start_d[$i]}")"
+        echo "   end   date: $(date_conv "${w_expir_d[$i]}")"
     echo "-------------------------------------------"
     done
 fi
