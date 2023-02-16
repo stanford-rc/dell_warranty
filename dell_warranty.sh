@@ -264,11 +264,12 @@ if [[ $json == 1 ]]; then
         exit
     fi
 
+    declare -A srv
     # shellcheck disable=SC2004
     for i in ${!w_service[*]}; do
       srv[$i]=$(jo service="${w_service[$i]}" \
-         start_date="$(date -d"${w_start_d[$i]}" -I)" \
-         end_date="$(date -d"${w_expir_d[$i]}" -I)")
+                   start_date="$(date -d"${w_start_d[$i]}" -I)" \
+                   end_date="$(date -d"${w_expir_d[$i]}" -I)")
     done
     srv_jarr=$(jo -a "${srv[@]}")
     jo -p product="$c_prod" \
