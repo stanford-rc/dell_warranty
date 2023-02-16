@@ -174,6 +174,7 @@ else
     url_c_det="$url_comp/Configuration/GetConfiguration"
     url_overview="$url_root/home/en-us/product-support/servicetag"
 
+    [[ -z $DELL_ABCK ]] && _abck="$DELL_ABCK" || \
     _abck="17D5BD1B272492D9DEB654A253A0ECD0~0~YAAQtTkZuE3yVy+GAQAAbQVYTAkUTP+O"
     _abck+="n/0FtQxI05TbVXuLNxUPbUq3G0cxEGssUhv/TqIewPjqw5SLOOmZ7Ii0Hr18GSfm0Z"
     _abck+="k7I0q6K+9lyp1xLhUbL3OgdzAffpUHtPAgDSUBMPXsIlh9otHiY7C0sBZ0DIXgDrKP"
