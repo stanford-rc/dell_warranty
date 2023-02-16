@@ -1,7 +1,6 @@
 FROM alpine
 
-RUN apk add --no-cache bash coreutils jo httpie go git jq
-RUN apk add py-setuptools # missing httpie dependency as of 20210818
+RUN apk add --no-cache bash coreutils jo curl go git jq
 RUN go install github.com/ericchiang/pup@latest
 RUN go install github.com/msoap/shell2http@latest
 
