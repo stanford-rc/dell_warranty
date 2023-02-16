@@ -29,7 +29,11 @@ err() {
 }
 
 date_conv() {
-    date -d@"$1" -I 2>/dev/null || echo "n/a"
+    if [[ $1 =~ ^[0-9]+$ ]]; then
+        date -d@"$1" -I 2>/dev/null || echo "n/a"
+    else
+        date -d "$1" -I 2>/dev/null || echo "n/a"
+    fi
 }
 
 usage() {
@@ -256,7 +260,7 @@ fi
 if [[ $json == 1 ]]; then
 
     if [[ $exp_only == 1 ]]; then
-        jo -p warranty_expiration_date="$(date -d@"$w_expdate" -I)"
+        jo -p warranty_expiration_date="$(date_conv "$w_expdate")"
         exit
     fi
 
@@ -269,18 +273,18 @@ if [[ $json == 1 ]]; then
     srv_jarr=$(jo -a "${srv[@]}")
     jo -p product="$c_prod" \
           svctag="$svctag" \
-          ship_date="$(date -d@"$w_shpdate" -I)" \
+          ship_date="$(date_conv "$w_shpdate")" \
           country="${w_ctry:-n/a}" \
           warranty_type="${w_type:-n/a}" \
           warranty_status="${w_stat:-n/a}" \
-          warranty_expiration_date="$(date -d@"$w_expdate" -I)" \
+          warranty_expiration_date="$(date_conv "$w_expdate")" \
           support_services="$srv_jarr"
     exit
 fi
 
 ## CLI output
 if [[ $exp_only == 1 ]]; then
-    date -d@"$w_expdate" -I
+    date_conv "$w_expdate"
     exit
 else
     echo "==========================================="
