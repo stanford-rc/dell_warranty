@@ -7,7 +7,7 @@
 # constants -------------------------------------------------------------------
 
 declare -A req_urls
-req_urls=(  [http]="https://httpie.org"
+req_urls=(  [curl]="https://curl.se/"
             [pup]="https://github.com/ericchiang/pup"
             [jq]="http://stedolan.github.io/jq"
             [jo]="https://github.com/jpmens/jo" )
@@ -93,17 +93,17 @@ fi
 if [[ -n $DELL_API_KEY ]] && [[ -n $DELL_API_SEC ]]; then
 
     # mic check
-    check_req httpie jq
+    check_req curl jq
 
     # URLs
     api_url="https://apigtwb2c.us.dell.com/PROD/sbil/eapi/v5"
     api_auth_url="https://apigtwb2c.us.dell.com/auth/oauth/v2/token"
 
     # get bearer token
-    o=$(http ${DEBUG:+-vd} POST $api_auth_url \
-             Content-Type:application/x-www-form-urlencoded \
-             "client_id==$DELL_API_KEY" "client_secret==$DELL_API_SEC" \
-             "grant_type==client_credentials")
+    o=$(curl ${DEBUG:+-v} -s --request POST "$api_auth_url" \
+             -d "client_id=$DELL_API_KEY" -d "client_secret=$DELL_API_SEC" \
+             -d "grant_type=client_credentials" \
+             -H "Content-Type: application/x-www-form-urlencoded" )
     [[ $(jq -r .error <<< "$o") != "null" ]] &&
         err "$(jq -r '.error+": "+.error_description' <<< "$o" )"
     token=$(jq -r .access_token <<< "$o")
@@ -112,8 +112,10 @@ if [[ -n $DELL_API_KEY ]] && [[ -n $DELL_API_SEC ]]; then
     _api() { # $1: API function, $2: params
         local func=$1
         local params=$2
-        http ${DEBUG:+-vd} "$api_url/$func?$params" "Accept:application/json" \
-             "Authorization:Bearer $token"
+        curl ${DEBUG:+-v} -s --request GET \
+             --url "$api_url/$func?$params" \
+             --header "Accept: application/json" \
+             --header "Authorization: Bearer $token"
     }
 
     # API request
@@ -156,7 +158,7 @@ if [[ -n $DELL_API_KEY ]] && [[ -n $DELL_API_SEC ]]; then
 else
 
     # mic check
-    check_req http pup jo
+    check_req curl pup jo
 
     # URLs
     url_root="https://www.dell.com/support"
@@ -177,9 +179,13 @@ else
     # set default HTTPie options
     _http() { # $1: URL
         local url=$1
-        $(which http) --check-status --follow --timeout=5 ${DEBUG:+-vd} "$url" \
-        Accept-Language:en-us Content-Type:application/x-www-form-urlencoded \
-        Origin:https://support.dell.com Cookie:_abck=$_abck user-agent:Mozilla/5.0
+        curl -s ${DEBUG:+-v} -L --connect-timeout 5 "$url" \
+             -H "Accept-Language: en-us" \
+             -H "Accept-Encoding: identity" \
+             -H "Content-Type: application/x-www-form-urlencoded" \
+             -H "Origin: https://support.dell.com" \
+             -A "Mozilla/5.0" \
+             --cookie "_abck=$_abck"
     }
 
     # get general info
@@ -204,7 +210,7 @@ else
     w_info=$(_http "$url_w_inf/$s_encryp/mse/IPS?_=f") || err
 
     # get configuration details
-    c_details=$(http "$url_c_det?serviceTag=$s_encryp") || err
+    c_details=$(_http "$url_c_det?serviceTag=$s_encryp") || err
 
     ## dump save output
     [[ $dump == 1 ]] && {
