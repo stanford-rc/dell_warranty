@@ -124,9 +124,9 @@ To start the API server, you can either:
   2020/07/14 18:43:40 listen http://localhost:8080/
   ```
 
-* or directly deploy to Render:
+* or directly deploy to [Railway](railway.app):
 
-  [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/stanford-rc/dell_warranty)
+  [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/23biGs?referralCode=KL3ssj)
 
 
 And then, you can query the API server with:
