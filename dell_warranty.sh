@@ -133,6 +133,9 @@ if [[ -n $DELL_API_KEY ]] && [[ -n $DELL_API_SEC ]]; then
         err "service tag not found ($svctag)"
 
     c_prod=$(jq -r .systemDescription <<< "$o")
+    [[ "$c_prod" == "null" ]] && {
+        c_prod=$(jq -r .productLineDescription <<< "$o")
+    }
     w_ctry=$(jq -r .countryCode <<< "$o")
     w_rshp=$(jq -r .shipDate <<< "$o")
     w_shpdate=$(date +%s --date="$w_rshp") # epoch
@@ -310,7 +313,3 @@ else
     echo "-------------------------------------------"
     done
 fi
-
-
-
-
