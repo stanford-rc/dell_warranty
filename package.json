@@ -1,0 +1,8 @@
+{
+  "name": "dell_warranty",
+  "private": true,
+  "description": "Launches the installed Chrome so dell_warranty.sh can read Dell warranty pages.",
+  "dependencies": {
+    "playwright": "^1.56.1"
+  }
+}

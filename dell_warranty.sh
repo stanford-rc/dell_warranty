@@ -198,6 +198,24 @@ else
     # mic check
     check_req pup jo
 
+    # curl-impersonate cannot complete Dell's Akamai challenge. A real Chrome
+    # window can. dell_browser.js opens that window and saves the warranty HTML.
+    w_info=""
+    fetched=0
+    if command -v node >/dev/null 2>&1 && [[ -f "$script_dir/dell_browser.js" ]]; then
+        browser_dir=$(mktemp -d 2>/dev/null || mktemp -d -t dellw)
+        if node "$script_dir/dell_browser.js" "$svctag" "$browser_dir"; then
+            if [[ -s "$browser_dir/details.html" ]]; then
+                w_info=$(cat "$browser_dir/details.html")
+                [[ -s "$browser_dir/product.txt" ]] && c_prod=$(cat "$browser_dir/product.txt")
+                fetched=1
+            fi
+        fi
+        rm -rf "$browser_dir"
+    fi
+
+    if [[ $fetched -eq 0 ]]; then
+
     # Plain curl is denied by Dell's Akamai Bot Manager on a TLS/HTTP2
     # fingerprint basis (a correct User-Agent and the cookie are not enough).
     # curl-impersonate presents a genuine Chrome (BoringSSL) fingerprint, which
@@ -272,6 +290,8 @@ put it on \$PATH, or set \$DELL_CURL_IMPERSONATE to its path."
         err "Akamai blocked the request (fingerprint or _abck rate-limit). Recapture DELL_ABCK from a fresh browser session."
     fi
     [[ -z "$w_info" ]] && err "no warranty data returned for $svctag"
+
+    fi
 
     # asset info table (col 3 = Ship Date, col 4 = Location)
     asset_row='#WarrantyCmsViewModel-table tr:nth-of-type(2)'

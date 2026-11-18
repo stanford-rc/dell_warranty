@@ -44,6 +44,12 @@ For the CLI:
   Put it on `PATH`, drop the binary next to `dell_warranty.sh`, or point
   `DELL_CURL_IMPERSONATE` at it. Running the script with none present explains where
   to download it and how to make it discoverable.
+* Node.js, [Playwright](https://playwright.dev), and Google Chrome, for the
+  same no-key fallback. Akamai blocks `curl-impersonate` once the baked-in
+  session cookie expires. `dell_browser.js` opens the installed Chrome, lets
+  it complete that challenge, and hands the warranty HTML back to the script.
+  No API key and no cookie to copy. From this directory run `npm install`.
+  Chrome has to be the normal installed browser. A headless browser is blocked.
 
 To run the API server:
 * [shell2http](https://github.com/msoap/shell2http): a HTTP server for shell
